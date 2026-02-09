@@ -293,9 +293,35 @@ public class AdminListener implements Listener {
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta meta = (BookMeta) book.getItemMeta();
         if (meta != null) {
-            meta.setTitle(ChatUtils.format("&9Crédits"));
+            meta.setTitle(ChatUtils.format("&6EasyAdmin v1.2.5"));
             meta.setAuthor("Youtsuho");
-            meta.addPage("Devellopeur : Youtsuho");
+
+            // Page 1
+            String page1 = ChatUtils.format(
+                    "      &6&lEasyAdmin\n" +
+                    "      &8&m----------\n\n" +
+                    "&0Version : &71.2.5\n" +
+                    "&0Auteur : &bYoutsuho\n" +
+                    "&0Support : &dGemini\n\n" +
+                    "&8&m-------------------\n\n" +
+                    "&0Un plugin de gestion\n" +
+                    "&0simple et intuitif\n" +
+                    "&0pour votre serveur."
+            );
+
+            // Page 2
+            String page2 = ChatUtils.format(
+                    "&9&lRemerciements\n\n" +
+                    "&0Merci d'utiliser\n" +
+                    "&0EasyAdmin !\n\n" +
+                    "&0N'hésitez pas à\n" +
+                    "&0signaler les bugs\n" +
+                    "&0ou à proposer des\n" +
+                    "&0idées.\n\n" +
+                    "      &c&l❤"
+            );
+
+            meta.addPage(page1, page2);
             book.setItemMeta(meta);
             p.getInventory().addItem(book);
             p.sendMessage(ChatUtils.format(prefix + "&aVous avez reçu le livre des crédits !"));
