@@ -7,13 +7,18 @@ messages:
   target-offline: "&cLe joueur ciblé n'est plus en ligne."
   
   # Actions Admin
-  kick-success: "&aLe joueur %player% a été expulsé."
-  ban-success: "&aLe joueur %player% a été banni."
+  kick-success: "&aLe joueur %player% a été expulsé. Raison : &f%reason%"
+  ban-success: "&aLe joueur %player% a été banni. Raison : &f%reason%"
   tp-success: "&aTéléportation vers %player%..."
   tphere-success: "&aTéléportation de %player% sur vous."
   gamemode-change: "&aMode de jeu de %player% défini sur &e%gamemode%&a."
   heal-success: "&a%player% a été soigné."
   invsee-success: "&aOuverture de l'inventaire de %player%."
+  
+  # Input Raison
+  prompt-reason: "&eVeuillez écrire la raison du &c%action% &epour &b%target% &edans le chat."
+  prompt-cancel-info: "&7(Écrivez 'cancel' pour annuler)"
+  action-cancelled: "&cAction annulée."
   
   # Moderation
   freeze-enabled: "&b%player% a été gelé."
@@ -39,7 +44,7 @@ messages:
   weather-clear: "&eLa météo a été dégagée."
   weather-storm: "&9La pluie a commencé."
 
-# Raisons par défaut
+# Raisons par défaut (fallback)
 reasons:
   kick: "Expulsé par un administrateur."
   ban: "Banni par un administrateur."

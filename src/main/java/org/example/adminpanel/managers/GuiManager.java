@@ -3,9 +3,11 @@ package org.example.adminpanel.managers;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -29,12 +31,15 @@ public class GuiManager {
     public static class AdminHolder implements InventoryHolder {
         private final String type;
         private Player target;
+        private int page = 0; // Ajout page
 
         public AdminHolder(String type) { this.type = type; }
         public AdminHolder(String type, Player target) { this.type = type; this.target = target; }
+        public AdminHolder(String type, int page) { this.type = type; this.page = page; } // Constructeur pagination
         
         public String getType() { return type; }
         public Player getTarget() { return target; }
+        public int getPage() { return page; }
         @Override public @NotNull Inventory getInventory() { return Bukkit.createInventory(null, 9); } 
     }
 
@@ -48,16 +53,14 @@ public class GuiManager {
         inv.setItem(11, createItem(Material.GRASS_BLOCK, "&2Gestion Monde", "&7Météo et Temps"));
         inv.setItem(12, createItem(Material.OAK_SIGN, "&6Gestion Chat", "&7Clear & Lock"));
         
-        // Monitoring (Redstone Block)
+        // Monitoring
         Runtime runtime = Runtime.getRuntime();
         long maxMemory = runtime.maxMemory() / 1048576; // Convert to MB
         long freeMemory = runtime.freeMemory() / 1048576;
         long usedMemory = maxMemory - freeMemory;
         
-        // Note: Paper API permet getTPS(), mais pour rester générique sans NMS complexe, on affiche juste la RAM ici.
-        // Si le serveur tourne sur Paper, on pourrait ajouter le TPS.
         double[] tps = Bukkit.getTPS();
-        String tpsString = String.format("%.2f", tps[0]); // 1m TPS
+        String tpsString = String.format("%.2f", tps[0]);
 
         List<String> monitorLore = new ArrayList<>();
         monitorLore.add("&7TPS (1m): &a" + tpsString);
@@ -66,7 +69,9 @@ public class GuiManager {
 
         // Actions Perso (Vanish)
         boolean isVanished = plugin.getModerationManager().isVanished(player.getUniqueId());
-        inv.setItem(14, createItem(Material.POTION, isVanished ? "&aVanish (ON)" : "&cVanish (OFF)", "&7Devenir invisible"));
+        ItemStack vanishItem = createItem(Material.POTION, isVanished ? "&aVanish (ON)" : "&cVanish (OFF)", "&7Devenir invisible");
+        if (isVanished) addGlow(vanishItem);
+        inv.setItem(14, vanishItem);
 
         inv.setItem(15, createItem(Material.COMMAND_BLOCK, "&cReload Plugin", "&7Recharger la configuration"));
         inv.setItem(16, createItem(Material.BOOK, "&bCrédits", "&7Obtenir le livre des crédits"));
@@ -83,7 +88,10 @@ public class GuiManager {
         boolean isLocked = plugin.getModerationManager().isChatLocked();
 
         inv.setItem(11, createItem(Material.PAPER, "&eEffacer le Chat", "&7Supprimer les messages pour tous"));
-        inv.setItem(15, createItem(Material.IRON_BARS, isLocked ? "&aDéverrouiller Chat" : "&cVerrouiller Chat", "&7État actuel: " + (isLocked ? "&cVerrouillé" : "&aOuvert")));
+        
+        ItemStack lockItem = createItem(Material.IRON_BARS, isLocked ? "&aDéverrouiller Chat" : "&cVerrouiller Chat", "&7État actuel: " + (isLocked ? "&cVerrouillé" : "&aOuvert"));
+        if (isLocked) addGlow(lockItem);
+        inv.setItem(15, lockItem);
 
         inv.setItem(22, createItem(Material.ARROW, "&cRetour", "&7Menu principal"));
         fillBorders(inv);
@@ -91,22 +99,45 @@ public class GuiManager {
     }
 
     public void openPlayerList(Player player) {
-        Inventory inv = Bukkit.createInventory(new AdminHolder("PLAYERS"), 54, Component.text("Joueurs en ligne"));
+        openPlayerList(player, 0);
+    }
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-            SkullMeta meta = (SkullMeta) head.getItemMeta();
-            meta.setOwningPlayer(p);
-            meta.setDisplayName(ChatUtils.format("&e" + p.getName()));
-            List<String> lore = new ArrayList<>();
-            if (plugin.getModerationManager().isVanished(p.getUniqueId())) lore.add(ChatUtils.format("&7[VANISHED]"));
-            lore.add(ChatUtils.format("&7Cliquez pour gérer"));
-            meta.setLore(lore);
-            head.setItemMeta(meta);
-            inv.addItem(head);
+    public void openPlayerList(Player player, int page) {
+        Inventory inv = Bukkit.createInventory(new AdminHolder("PLAYERS", page), 54, Component.text("Joueurs (Page " + (page + 1) + ")"));
+
+        List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+        
+        // Configuration de la pagination
+        int maxSlots = 45; // 5 lignes pour les joueurs
+        int startIndex = page * maxSlots;
+        int endIndex = Math.min(startIndex + maxSlots, allPlayers.size());
+
+        // Remplissage des joueurs
+        if (startIndex < allPlayers.size()) {
+            for (int i = startIndex; i < endIndex; i++) {
+                Player p = allPlayers.get(i);
+                ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+                SkullMeta meta = (SkullMeta) head.getItemMeta();
+                meta.setOwningPlayer(p);
+                meta.setDisplayName(ChatUtils.format("&e" + p.getName()));
+                List<String> lore = new ArrayList<>();
+                if (plugin.getModerationManager().isVanished(p.getUniqueId())) lore.add(ChatUtils.format("&7[VANISHED]"));
+                lore.add(ChatUtils.format("&7Cliquez pour gérer"));
+                meta.setLore(lore);
+                head.setItemMeta(meta);
+                inv.setItem(i - startIndex, head);
+            }
         }
 
-        ItemStack back = createItem(Material.ARROW, "&cRetour", null);
+        // Navigation
+        if (page > 0) {
+            inv.setItem(45, createItem(Material.ARROW, "&ePage Précédente", null));
+        }
+        if (endIndex < allPlayers.size()) {
+            inv.setItem(53, createItem(Material.ARROW, "&ePage Suivante", null));
+        }
+
+        ItemStack back = createItem(Material.BARRIER, "&cRetour Menu", null);
         inv.setItem(49, back);
 
         player.openInventory(inv);
@@ -125,19 +156,23 @@ public class GuiManager {
 
         // Ligne 2 : Actions Modération & Déplacement
         inv.setItem(19, createItem(Material.ENDER_PEARL, "&bTéléportation", "&7Se TP au joueur"));
-        inv.setItem(20, createItem(Material.ENDER_EYE, "&5TP Here", "&7TP le joueur sur vous")); // NOUVEAU
+        inv.setItem(20, createItem(Material.ENDER_EYE, "&5TP Here", "&7TP le joueur sur vous")); 
         
         boolean isFrozen = plugin.getModerationManager().isFrozen(target.getUniqueId());
-        inv.setItem(21, createItem(Material.PACKED_ICE, isFrozen ? "&bDégeler (Unfreeze)" : "&bGeler (Freeze)", "&7État: " + (isFrozen ? "Gelé" : "Libre")));
+        ItemStack freezeItem = createItem(Material.PACKED_ICE, isFrozen ? "&bDégeler (Unfreeze)" : "&bGeler (Freeze)", "&7État: " + (isFrozen ? "Gelé" : "Libre"));
+        if (isFrozen) addGlow(freezeItem);
+        inv.setItem(21, freezeItem);
         
         boolean isMuted = plugin.getModerationManager().isMuted(target.getUniqueId());
-        inv.setItem(22, createItem(Material.PAPER, isMuted ? "&aUnmute" : "&cMute", "&7Empêcher de parler"));
+        ItemStack muteItem = createItem(Material.PAPER, isMuted ? "&aUnmute" : "&cMute", "&7Empêcher de parler");
+        if (isMuted) addGlow(muteItem);
+        inv.setItem(22, muteItem);
         
         inv.setItem(23, createItem(Material.CHEST, "&6Inventaire (InvSee)", "&7Voir l'inventaire"));
         inv.setItem(24, createItem(Material.GOLDEN_APPLE, "&dHeal & Feed", "&7Soigner complètement"));
 
-        inv.setItem(25, createItem(Material.REDSTONE_BLOCK, "&cKick", "&7Expulser le joueur"));
-        inv.setItem(26, createItem(Material.NETHERITE_SWORD, "&4Ban", "&7Bannir le joueur"));
+        inv.setItem(25, createItem(Material.REDSTONE_BLOCK, "&cKick", "&7Expulser le joueur (Raison perso)"));
+        inv.setItem(26, createItem(Material.NETHERITE_SWORD, "&4Ban", "&7Bannir le joueur (Raison perso)"));
 
         // Ligne 3 : Gamemodes
         inv.setItem(28, createItem(Material.IRON_SWORD, "&eSurvival", "&7Mode Survie"));
@@ -179,6 +214,15 @@ public class GuiManager {
             item.setItemMeta(meta);
         }
         return item;
+    }
+    
+    private void addGlow(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.addEnchant(Enchantment.DURABILITY, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            item.setItemMeta(meta);
+        }
     }
     
     private ItemStack createMonitoringItem(Material mat, String name, List<String> lore) {

@@ -3,7 +3,7 @@
 # 🛡️ AdminPanel
 ### Le plugin d'administration ultime avec Interface Graphique (GUI)
 
-![Version](https://img.shields.io/badge/version-1.0-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.2.5-blue?style=for-the-badge)
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.4+-success?style=for-the-badge&logo=minecraft)
 ![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)
 

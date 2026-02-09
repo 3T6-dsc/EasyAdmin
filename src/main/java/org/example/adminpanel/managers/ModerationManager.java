@@ -1,6 +1,10 @@
 package org.example.adminpanel.managers;
 
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +14,37 @@ public class ModerationManager {
     private final Set<UUID> mutedPlayers = new HashSet<>();
     private final Set<UUID> vanishedPlayers = new HashSet<>();
     private boolean chatLocked = false;
+
+    // --- SYSTEME DE RAISON (CHAT INPUT) ---
+    private final Map<UUID, ReasonRequest> awaitingReason = new HashMap<>();
+
+    public enum ActionType {
+        KICK, BAN
+    }
+
+    public static class ReasonRequest {
+        public final UUID targetUuid;
+        public final String targetName; // Au cas où le joueur déco
+        public final ActionType type;
+
+        public ReasonRequest(Player target, ActionType type) {
+            this.targetUuid = target.getUniqueId();
+            this.targetName = target.getName();
+            this.type = type;
+        }
+    }
+
+    public void addReasonRequest(Player admin, Player target, ActionType type) {
+        awaitingReason.put(admin.getUniqueId(), new ReasonRequest(target, type));
+    }
+
+    public ReasonRequest getReasonRequest(Player admin) {
+        return awaitingReason.get(admin.getUniqueId());
+    }
+
+    public void removeReasonRequest(Player admin) {
+        awaitingReason.remove(admin.getUniqueId());
+    }
 
     // --- FREEZE ---
     public boolean isFrozen(UUID uuid) {

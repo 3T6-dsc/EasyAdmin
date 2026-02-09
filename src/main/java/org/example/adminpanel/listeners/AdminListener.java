@@ -1,10 +1,10 @@
 package org.example.adminpanel.listeners;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.potion.PotionEffect;
 import org.example.adminpanel.AdminPlugin;
 import org.example.adminpanel.managers.GuiManager;
+import org.example.adminpanel.managers.ModerationManager;
 import org.example.adminpanel.utils.ChatUtils;
 
 public class AdminListener implements Listener {
@@ -39,12 +40,15 @@ public class AdminListener implements Listener {
         if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR || e.getCurrentItem().getType() == Material.GRAY_STAINED_GLASS_PANE) return;
 
         String prefix = plugin.getConfig().getString("messages.prefix");
+        
+        // Son de clic générique
+        p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1f);
 
         // --- MENU PRINCIPAL ---
         if (adminHolder.getType().equals("MAIN")) {
             switch (e.getSlot()) {
                 case 10: // Joueurs
-                    plugin.getGuiManager().openPlayerList(p);
+                    plugin.getGuiManager().openPlayerList(p, 0);
                     break;
                 case 11: // Monde
                     if (checkPerm(p, "adminpanel.world")) {
@@ -75,12 +79,14 @@ public class AdminListener implements Listener {
                                 online.showPlayer(plugin, p);
                             }
                         }
+                        p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1f, 1f);
                         plugin.getGuiManager().openMainMenu(p); // Refresh icon
                     }
                     break;
                 case 15: // Reload
                     plugin.reloadConfig();
                     p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.reload")));
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
                     p.closeInventory();
                     break;
                 case 16: // Crédits
@@ -106,6 +112,7 @@ public class AdminListener implements Listener {
                         Bukkit.broadcast(Component.text(""));
                     }
                     Bukkit.broadcast(Component.text(ChatUtils.format(prefix + plugin.getConfig().getString("messages.chat-clear"))));
+                    p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
                     break;
                 case IRON_BARS: // Lock/Unlock
                     boolean locked = !plugin.getModerationManager().isChatLocked();
@@ -115,6 +122,7 @@ public class AdminListener implements Listener {
                     } else {
                         Bukkit.broadcast(Component.text(ChatUtils.format(prefix + plugin.getConfig().getString("messages.chat-unlocked"))));
                     }
+                    p.playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 1f, 1f);
                     plugin.getGuiManager().openChatMenu(p); // Refresh
                     break;
             }
@@ -127,6 +135,7 @@ public class AdminListener implements Listener {
             }
             if (!checkPerm(p, "adminpanel.world")) return;
 
+            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
             switch (e.getCurrentItem().getType()) {
                 case SUNFLOWER: p.getWorld().setTime(1000); p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.time-day"))); break;
                 case RED_BED: p.getWorld().setTime(13000); p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.time-night"))); break;
@@ -134,8 +143,10 @@ public class AdminListener implements Listener {
                 case WATER_BUCKET: p.getWorld().setStorm(true); p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.weather-storm"))); break;
             }
         }
-        // --- LISTE JOUEURS ---
+        // --- LISTE JOUEURS (PAGINATION) ---
         else if (adminHolder.getType().equals("PLAYERS")) {
+            int currentPage = adminHolder.getPage();
+            
             if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 String targetName = e.getCurrentItem().getItemMeta().getDisplayName().substring(2); 
                 Player target = Bukkit.getPlayer(targetName);
@@ -143,9 +154,15 @@ public class AdminListener implements Listener {
                     plugin.getGuiManager().openPlayerActions(p, target);
                 } else {
                     p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.target-offline")));
-                    plugin.getGuiManager().openPlayerList(p); 
+                    plugin.getGuiManager().openPlayerList(p, currentPage); 
                 }
             } else if (e.getCurrentItem().getType() == Material.ARROW) {
+                if (e.getSlot() == 45) { // Précédent
+                    plugin.getGuiManager().openPlayerList(p, currentPage - 1);
+                } else if (e.getSlot() == 53) { // Suivant
+                    plugin.getGuiManager().openPlayerList(p, currentPage + 1);
+                }
+            } else if (e.getCurrentItem().getType() == Material.BARRIER) { // Retour (slot 49)
                 plugin.getGuiManager().openMainMenu(p);
             }
         }
@@ -162,6 +179,7 @@ public class AdminListener implements Listener {
                 case ENDER_PEARL: // TP
                     if (checkPerm(p, "adminpanel.tp")) {
                         p.teleport(target);
+                        p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.tp-success").replace("%player%", target.getName())));
                     }
                     break;
@@ -169,6 +187,7 @@ public class AdminListener implements Listener {
                 case ENDER_EYE: // TP HERE
                     if (checkPerm(p, "adminpanel.tphere")) {
                         target.teleport(p);
+                        p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.tphere-success").replace("%player%", target.getName())));
                     }
                     break;
@@ -178,6 +197,7 @@ public class AdminListener implements Listener {
                         boolean frozen = plugin.getModerationManager().toggleFreeze(target.getUniqueId());
                         String msgKey = frozen ? "messages.freeze-enabled" : "messages.freeze-disabled";
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString(msgKey).replace("%player%", target.getName())));
+                        p.playSound(p.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 1f);
                         plugin.getGuiManager().openPlayerActions(p, target);
                     }
                     break;
@@ -187,6 +207,7 @@ public class AdminListener implements Listener {
                         boolean muted = plugin.getModerationManager().toggleMute(target.getUniqueId());
                         String msgKey = muted ? "messages.mute-enabled" : "messages.mute-disabled";
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString(msgKey).replace("%player%", target.getName())));
+                        p.playSound(p.getLocation(), Sound.BLOCK_WOOL_BREAK, 1f, 1f);
                         plugin.getGuiManager().openPlayerActions(p, target);
                     }
                     break;
@@ -205,24 +226,20 @@ public class AdminListener implements Listener {
                         for (PotionEffect effect : target.getActivePotionEffects()) {
                             target.removePotionEffect(effect.getType());
                         }
+                        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.heal-success").replace("%player%", target.getName())));
                     }
                     break;
                     
                 case REDSTONE_BLOCK: // Kick
                     if (checkPerm(p, "adminpanel.kick")) {
-                        target.kickPlayer(ChatUtils.format(plugin.getConfig().getString("reasons.kick")));
-                        p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.kick-success").replace("%player%", target.getName())));
-                        plugin.getGuiManager().openPlayerList(p);
+                        initiateReasonInput(p, target, ModerationManager.ActionType.KICK);
                     }
                     break;
 
                 case NETHERITE_SWORD: // Ban
                     if (checkPerm(p, "adminpanel.ban")) {
-                        Bukkit.getBanList(BanList.Type.NAME).addBan(target.getName(), plugin.getConfig().getString("reasons.ban"), null, p.getName());
-                        target.kickPlayer(ChatUtils.format(plugin.getConfig().getString("reasons.ban")));
-                        p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.ban-success").replace("%player%", target.getName())));
-                        plugin.getGuiManager().openPlayerList(p);
+                        initiateReasonInput(p, target, ModerationManager.ActionType.BAN);
                     }
                     break;
                 
@@ -233,7 +250,7 @@ public class AdminListener implements Listener {
                 case LEATHER_BOOTS: setGamemode(p, target, GameMode.ADVENTURE); break;
 
                 case ARROW: // Retour
-                    plugin.getGuiManager().openPlayerList(p);
+                    plugin.getGuiManager().openPlayerList(p, 0);
                     break;
             }
         }
@@ -242,6 +259,7 @@ public class AdminListener implements Listener {
     private boolean checkPerm(Player p, String perm) {
         if (!p.hasPermission(perm)) {
             p.sendMessage(ChatUtils.format(plugin.getConfig().getString("messages.prefix") + plugin.getConfig().getString("messages.no-permission")));
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
             return false;
         }
         return true;
@@ -254,6 +272,21 @@ public class AdminListener implements Listener {
                 .replace("%player%", target.getName())
                 .replace("%gamemode%", gm.name());
         admin.sendMessage(ChatUtils.format(plugin.getConfig().getString("messages.prefix") + msg));
+        admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
+    }
+    
+    private void initiateReasonInput(Player admin, Player target, ModerationManager.ActionType type) {
+        admin.closeInventory();
+        plugin.getModerationManager().addReasonRequest(admin, target, type);
+        
+        String prompt = plugin.getConfig().getString("messages.prompt-reason")
+                .replace("%action%", type.name())
+                .replace("%target%", target.getName());
+        String cancelInfo = plugin.getConfig().getString("messages.prompt-cancel-info");
+        
+        admin.sendMessage(ChatUtils.format(plugin.getConfig().getString("messages.prefix") + prompt));
+        admin.sendMessage(ChatUtils.format(cancelInfo));
+        admin.playSound(admin.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
     }
 
     private void giveCreditsBook(Player p, String prefix) {
