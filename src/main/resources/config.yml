@@ -1,0 +1,45 @@
+# Configuration du Plugin AdminPanel
+
+messages:
+  prefix: "&8[&cAdminPanel&8] &7"
+  no-permission: "&cVous n'avez pas la permission d'exécuter cette commande."
+  reload: "&aConfiguration rechargée avec succès !"
+  target-offline: "&cLe joueur ciblé n'est plus en ligne."
+  
+  # Actions Admin
+  kick-success: "&aLe joueur %player% a été expulsé."
+  ban-success: "&aLe joueur %player% a été banni."
+  tp-success: "&aTéléportation vers %player%..."
+  tphere-success: "&aTéléportation de %player% sur vous."
+  gamemode-change: "&aMode de jeu de %player% défini sur &e%gamemode%&a."
+  heal-success: "&a%player% a été soigné."
+  invsee-success: "&aOuverture de l'inventaire de %player%."
+  
+  # Moderation
+  freeze-enabled: "&b%player% a été gelé."
+  freeze-disabled: "&b%player% a été dégelé."
+  freeze-message: "&cVous avez été gelé par un administrateur !"
+  mute-enabled: "&c%player% a été rendu muet."
+  mute-disabled: "&a%player% peut parler à nouveau."
+  mute-message: "&cVous ne pouvez pas parler car vous êtes muet."
+  
+  # Vanish
+  vanish-enabled: "&aVous êtes maintenant invisible (Vanish)."
+  vanish-disabled: "&cVous êtes maintenant visible."
+  
+  # Chat Global
+  chat-clear: "&eLe chat a été effacé par un administrateur."
+  chat-locked: "&cLe chat a été verrouillé par %player%."
+  chat-unlocked: "&aLe chat a été déverrouillé."
+  chat-is-locked: "&cLe chat est actuellement verrouillé."
+  
+  # World
+  time-day: "&eLe temps a été défini sur Jour."
+  time-night: "&9Le temps a été défini sur Nuit."
+  weather-clear: "&eLa météo a été dégagée."
+  weather-storm: "&9La pluie a commencé."
+
+# Raisons par défaut
+reasons:
+  kick: "Expulsé par un administrateur."
+  ban: "Banni par un administrateur."
