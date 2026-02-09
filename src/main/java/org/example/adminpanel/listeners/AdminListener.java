@@ -302,7 +302,6 @@ public class AdminListener implements Listener {
                     "      &8&m----------\n\n" +
                     "&0Version : &71.2.5\n" +
                     "&0Auteur : &bYoutsuho\n" +
-                    "&0Support : &dGemini\n\n" +
                     "&8&m-------------------\n\n" +
                     "&0Un plugin de gestion\n" +
                     "&0simple et intuitif\n" +
