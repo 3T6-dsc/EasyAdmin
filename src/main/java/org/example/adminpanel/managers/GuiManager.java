@@ -50,8 +50,20 @@ public class GuiManager {
 
         // Ligne 1
         inv.setItem(10, createItem(Material.PLAYER_HEAD, "&eGestion des Joueurs", "&7Liste des joueurs en ligne"));
-        inv.setItem(11, createItem(Material.GRASS_BLOCK, "&2Gestion Monde", "&7Météo et Temps"));
-        inv.setItem(12, createItem(Material.OAK_SIGN, "&6Gestion Chat", "&7Clear & Lock"));
+        
+        // Gestion Monde
+        if (player.hasPermission("easyadmin.world")) {
+            inv.setItem(11, createItem(Material.GRASS_BLOCK, "&2Gestion Monde", "&7Météo et Temps"));
+        } else {
+            inv.setItem(11, createItem(Material.BARRIER, "&cGestion Monde", "&7Permission requise"));
+        }
+
+        // Gestion Chat
+        if (player.hasPermission("easyadmin.chat.manage")) {
+            inv.setItem(12, createItem(Material.OAK_SIGN, "&6Gestion Chat", "&7Clear & Lock"));
+        } else {
+             inv.setItem(12, createItem(Material.BARRIER, "&cGestion Chat", "&7Permission requise"));
+        }
         
         // Monitoring
         Runtime runtime = Runtime.getRuntime();
@@ -68,10 +80,14 @@ public class GuiManager {
         inv.setItem(13, createMonitoringItem(Material.REDSTONE_BLOCK, "&cMonitoring Serveur", monitorLore));
 
         // Actions Perso (Vanish)
-        boolean isVanished = plugin.getModerationManager().isVanished(player.getUniqueId());
-        ItemStack vanishItem = createItem(Material.POTION, isVanished ? "&aVanish (ON)" : "&cVanish (OFF)", "&7Devenir invisible");
-        if (isVanished) addGlow(vanishItem);
-        inv.setItem(14, vanishItem);
+        if (player.hasPermission("easyadmin.vanish")) {
+            boolean isVanished = plugin.getModerationManager().isVanished(player.getUniqueId());
+            ItemStack vanishItem = createItem(Material.POTION, isVanished ? "&aVanish (ON)" : "&cVanish (OFF)", "&7Devenir invisible");
+            if (isVanished) addGlow(vanishItem);
+            inv.setItem(14, vanishItem);
+        } else {
+             inv.setItem(14, createItem(Material.BARRIER, "&cVanish", "&7Permission requise"));
+        }
 
         inv.setItem(15, createItem(Material.COMMAND_BLOCK, "&cReload Plugin", "&7Recharger la configuration"));
         inv.setItem(16, createItem(Material.BOOK, "&bCrédits", "&7Obtenir le livre des crédits"));

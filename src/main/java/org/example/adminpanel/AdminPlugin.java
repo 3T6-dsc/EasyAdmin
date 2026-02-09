@@ -31,12 +31,12 @@ public class AdminPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AdminListener(this), this);
         getServer().getPluginManager().registerEvents(new ModerationListener(this), this);
         
-        getLogger().info("AdminPanel active !");
+        getLogger().info("EasyAdmin active !");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("AdminPanel desactive.");
+        getLogger().info("EasyAdmin desactive.");
     }
 
     public static AdminPlugin getInstance() {

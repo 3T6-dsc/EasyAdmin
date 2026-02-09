@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛡️ AdminPanel
+# 🛡️ EasyAdmin
 ### Le plugin d'administration ultime avec Interface Graphique (GUI)
 
 ![Version](https://img.shields.io/badge/version-1.2.5-blue?style=for-the-badge)
@@ -19,7 +19,7 @@
 
 ## ✨ Fonctionnalités
 
-AdminPanel remplace les commandes fastidieuses par des interfaces graphiques intuitives.
+EasyAdmin remplace les commandes fastidieuses par des interfaces graphiques intuitives.
 
 | Catégorie | Fonctionnalités |
 | :--- | :--- |
@@ -35,7 +35,7 @@ Il n'y a qu'une seule commande à retenir pour ouvrir le panneau principal :
 
 ```bash
 /admin
-# Alias disponibles : /panel, /ap
+# Alias disponibles : /panel, /ap, /easyadmin
 ```
 
 ---
@@ -46,20 +46,20 @@ Voici la liste complète des permissions pour configurer vos rangs (LuckPerms, G
 
 | Permission | Description | Recommandé pour |
 | :--- | :--- | :--- |
-| `adminpanel.use` | Ouvrir le menu principal (`/admin`) | Modérateurs+ |
-| `adminpanel.tp` | Se téléporter à un joueur | Modérateurs+ |
-| `adminpanel.tphere` | Téléporter un joueur sur soi | Admins |
-| `adminpanel.invsee` | Voir l'inventaire | Modérateurs+ |
-| `adminpanel.gamemode` | Changer le mode de jeu | Admins |
-| `adminpanel.heal` | Soigner un joueur | Modérateurs+ |
-| `adminpanel.freeze` | Geler un joueur (Freeze) | Modérateurs+ |
-| `adminpanel.mute` | Rendre muet (Mute) | Assistants+ |
-| `adminpanel.kick` | Expulser un joueur | Modérateurs+ |
-| `adminpanel.ban` | Bannir un joueur | Admins |
-| `adminpanel.vanish` | Se mettre en Vanish | Admins |
-| `adminpanel.world` | Changer l'heure/météo | Admins |
-| `adminpanel.chat.manage` | Clear et Lock le chat | Modérateurs+ |
-| `adminpanel.chat.bypass` | Parler quand le chat est verrouillé | Staff |
+| `easyadmin.use` | Ouvrir le menu principal (`/admin`) | Modérateurs+ |
+| `easyadmin.tp` | Se téléporter à un joueur | Modérateurs+ |
+| `easyadmin.tphere` | Téléporter un joueur sur soi | Admins |
+| `easyadmin.invsee` | Voir l'inventaire | Modérateurs+ |
+| `easyadmin.gamemode` | Changer le mode de jeu | Admins |
+| `easyadmin.heal` | Soigner un joueur | Modérateurs+ |
+| `easyadmin.freeze` | Geler un joueur (Freeze) | Modérateurs+ |
+| `easyadmin.mute` | Rendre muet (Mute) | Assistants+ |
+| `easyadmin.kick` | Expulser un joueur | Modérateurs+ |
+| `easyadmin.ban` | Bannir un joueur | Admins |
+| `easyadmin.vanish` | Se mettre en Vanish | Admins |
+| `easyadmin.world` | Changer l'heure/météo | Admins |
+| `easyadmin.chat.manage` | Clear et Lock le chat | Modérateurs+ |
+| `easyadmin.chat.bypass` | Parler quand le chat est verrouillé | Staff |
 
 ---
 
@@ -69,7 +69,7 @@ Le fichier `config.yml` vous permet de traduire le plugin et de modifier les com
 
 ```yaml
 messages:
-  prefix: "&8[&cAdminPanel&8] &7"
+  prefix: "&8[&cEasyAdmin&8] &7"
   no-permission: "&cVous n'avez pas la permission..."
   
   # Messages de modération

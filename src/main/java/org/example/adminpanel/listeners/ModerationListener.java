@@ -105,7 +105,7 @@ public class ModerationListener implements Listener {
 
         // Check Chat Locked global
         if (plugin.getModerationManager().isChatLocked()) {
-            if (!p.hasPermission("adminpanel.chat.bypass")) {
+            if (!p.hasPermission("easyadmin.chat.bypass")) {
                 e.setCancelled(true);
                 p.sendMessage(ChatUtils.format(plugin.getConfig().getString("messages.chat-is-locked")));
             }
@@ -119,7 +119,7 @@ public class ModerationListener implements Listener {
         // Cacher les admins Vanished pour le joueur qui vient de rejoindre
         for (Player online : Bukkit.getOnlinePlayers()) {
             if (plugin.getModerationManager().isVanished(online.getUniqueId())) {
-                if (!joiner.hasPermission("adminpanel.vanish")) {
+                if (!joiner.hasPermission("easyadmin.vanish")) {
                     joiner.hidePlayer(plugin, online);
                 }
             }

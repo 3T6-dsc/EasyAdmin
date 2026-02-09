@@ -1,1 +1,1 @@
-rootProject.name = "Myfirstpluginmc"
+rootProject.name = "EasyAdmin"

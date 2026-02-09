@@ -1,58 +1,58 @@
-name: AdminPanel
+name: EasyAdmin
 version: '${version}'
 main: org.example.adminpanel.AdminPlugin
 api-version: '1.20'
-prefix: AdminPanel
+prefix: EasyAdmin
 authors: [Gemini, Youtsuho]
 description: Un plugin d'administration complet avec GUI.
 
 commands:
   admin:
     description: Ouvre le panneau d'administration
-    aliases: [panel, ap]
-    permission: adminpanel.use
+    aliases: [panel, ap, easyadmin]
+    permission: easyadmin.use
     usage: /<command>
 
 permissions:
-  adminpanel.use:
+  easyadmin.use:
     description: Permet d'ouvrir le menu admin
     default: op
-  adminpanel.kick:
+  easyadmin.kick:
     description: Permet d'expulser un joueur via le GUI
     default: op
-  adminpanel.ban:
+  easyadmin.ban:
     description: Permet de bannir un joueur via le GUI
     default: op
-  adminpanel.tp:
+  easyadmin.tp:
     description: Permet de se téléporter via le GUI
     default: op
-  adminpanel.tphere:
+  easyadmin.tphere:
     description: Permet de téléporter un joueur sur soi
     default: op
-  adminpanel.gamemode:
+  easyadmin.gamemode:
     description: Permet de changer le mode de jeu d'un joueur
     default: op
-  adminpanel.invsee:
+  easyadmin.invsee:
     description: Permet de voir l'inventaire d'un joueur
     default: op
-  adminpanel.freeze:
+  easyadmin.freeze:
     description: Permet de geler un joueur
     default: op
-  adminpanel.mute:
+  easyadmin.mute:
     description: Permet de rendre muet un joueur
     default: op
-  adminpanel.heal:
+  easyadmin.heal:
     description: Permet de soigner un joueur
     default: op
-  adminpanel.world:
+  easyadmin.world:
     description: Permet de gérer le temps et la météo
     default: op
-  adminpanel.vanish:
+  easyadmin.vanish:
     description: Permet de se rendre invisible
     default: op
-  adminpanel.chat.manage:
+  easyadmin.chat.manage:
     description: Permet de gérer le chat (clear/lock)
     default: op
-  adminpanel.chat.bypass:
+  easyadmin.chat.bypass:
     description: Permet de parler quand le chat est verrouillé
     default: op

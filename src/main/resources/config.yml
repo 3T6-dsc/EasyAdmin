@@ -1,7 +1,7 @@
-# Configuration du Plugin AdminPanel
+# Configuration du Plugin EasyAdmin
 
 messages:
-  prefix: "&8[&cAdminPanel&8] &7"
+  prefix: "&8[&cEasyAdmin&8] &7"
   no-permission: "&cVous n'avez pas la permission d'exécuter cette commande."
   reload: "&aConfiguration rechargée avec succès !"
   target-offline: "&cLe joueur ciblé n'est plus en ligne."

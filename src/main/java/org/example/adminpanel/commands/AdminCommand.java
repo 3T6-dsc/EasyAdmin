@@ -25,7 +25,7 @@ public class AdminCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (!player.hasPermission("adminpanel.use")) {
+        if (!player.hasPermission("easyadmin.use")) {
             player.sendMessage(ChatUtils.format(plugin.getConfig().getString("messages.prefix") + plugin.getConfig().getString("messages.no-permission")));
             return true;
         }

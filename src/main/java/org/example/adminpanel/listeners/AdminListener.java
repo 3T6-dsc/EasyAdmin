@@ -51,12 +51,12 @@ public class AdminListener implements Listener {
                     plugin.getGuiManager().openPlayerList(p, 0);
                     break;
                 case 11: // Monde
-                    if (checkPerm(p, "adminpanel.world")) {
+                    if (checkPerm(p, "easyadmin.world")) {
                         plugin.getGuiManager().openWorldMenu(p);
                     }
                     break;
                 case 12: // Chat Menu
-                    if (checkPerm(p, "adminpanel.chat.manage")) {
+                    if (checkPerm(p, "easyadmin.chat.manage")) {
                         plugin.getGuiManager().openChatMenu(p);
                     }
                     break;
@@ -64,12 +64,12 @@ public class AdminListener implements Listener {
                     plugin.getGuiManager().openMainMenu(p);
                     break;
                 case 14: // Vanish
-                    if (checkPerm(p, "adminpanel.vanish")) {
+                    if (checkPerm(p, "easyadmin.vanish")) {
                         boolean isVanished = plugin.getModerationManager().toggleVanish(p.getUniqueId());
                         if (isVanished) {
                             p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.vanish-enabled")));
                             for (Player online : Bukkit.getOnlinePlayers()) {
-                                if (!online.hasPermission("adminpanel.vanish")) {
+                                if (!online.hasPermission("easyadmin.vanish")) {
                                     online.hidePlayer(plugin, p);
                                 }
                             }
@@ -104,7 +104,7 @@ public class AdminListener implements Listener {
                 plugin.getGuiManager().openMainMenu(p);
                 return;
             }
-            if (!checkPerm(p, "adminpanel.chat.manage")) return;
+            if (!checkPerm(p, "easyadmin.chat.manage")) return;
 
             switch (e.getCurrentItem().getType()) {
                 case PAPER: // Clear Chat
@@ -133,7 +133,7 @@ public class AdminListener implements Listener {
                 plugin.getGuiManager().openMainMenu(p);
                 return;
             }
-            if (!checkPerm(p, "adminpanel.world")) return;
+            if (!checkPerm(p, "easyadmin.world")) return;
 
             p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
             switch (e.getCurrentItem().getType()) {
@@ -177,7 +177,7 @@ public class AdminListener implements Listener {
 
             switch (e.getCurrentItem().getType()) {
                 case ENDER_PEARL: // TP
-                    if (checkPerm(p, "adminpanel.tp")) {
+                    if (checkPerm(p, "easyadmin.tp")) {
                         p.teleport(target);
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.tp-success").replace("%player%", target.getName())));
@@ -185,7 +185,7 @@ public class AdminListener implements Listener {
                     break;
                 
                 case ENDER_EYE: // TP HERE
-                    if (checkPerm(p, "adminpanel.tphere")) {
+                    if (checkPerm(p, "easyadmin.tphere")) {
                         target.teleport(p);
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.tphere-success").replace("%player%", target.getName())));
@@ -193,7 +193,7 @@ public class AdminListener implements Listener {
                     break;
 
                 case PACKED_ICE: // Freeze
-                    if (checkPerm(p, "adminpanel.freeze")) {
+                    if (checkPerm(p, "easyadmin.freeze")) {
                         boolean frozen = plugin.getModerationManager().toggleFreeze(target.getUniqueId());
                         String msgKey = frozen ? "messages.freeze-enabled" : "messages.freeze-disabled";
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString(msgKey).replace("%player%", target.getName())));
@@ -203,7 +203,7 @@ public class AdminListener implements Listener {
                     break;
 
                 case PAPER: // Mute
-                    if (checkPerm(p, "adminpanel.mute")) {
+                    if (checkPerm(p, "easyadmin.mute")) {
                         boolean muted = plugin.getModerationManager().toggleMute(target.getUniqueId());
                         String msgKey = muted ? "messages.mute-enabled" : "messages.mute-disabled";
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString(msgKey).replace("%player%", target.getName())));
@@ -213,14 +213,14 @@ public class AdminListener implements Listener {
                     break;
 
                 case CHEST: // InvSee
-                    if (checkPerm(p, "adminpanel.invsee")) {
+                    if (checkPerm(p, "easyadmin.invsee")) {
                         p.sendMessage(ChatUtils.format(prefix + plugin.getConfig().getString("messages.invsee-success").replace("%player%", target.getName())));
                         p.openInventory(target.getInventory());
                     }
                     break;
 
                 case GOLDEN_APPLE: // Heal
-                    if (checkPerm(p, "adminpanel.heal")) {
+                    if (checkPerm(p, "easyadmin.heal")) {
                         target.setHealth(20);
                         target.setFoodLevel(20);
                         for (PotionEffect effect : target.getActivePotionEffects()) {
@@ -232,13 +232,13 @@ public class AdminListener implements Listener {
                     break;
                     
                 case REDSTONE_BLOCK: // Kick
-                    if (checkPerm(p, "adminpanel.kick")) {
+                    if (checkPerm(p, "easyadmin.kick")) {
                         initiateReasonInput(p, target, ModerationManager.ActionType.KICK);
                     }
                     break;
 
                 case NETHERITE_SWORD: // Ban
-                    if (checkPerm(p, "adminpanel.ban")) {
+                    if (checkPerm(p, "easyadmin.ban")) {
                         initiateReasonInput(p, target, ModerationManager.ActionType.BAN);
                     }
                     break;
@@ -266,7 +266,7 @@ public class AdminListener implements Listener {
     }
 
     private void setGamemode(Player admin, Player target, GameMode gm) {
-        if (!checkPerm(admin, "adminpanel.gamemode")) return;
+        if (!checkPerm(admin, "easyadmin.gamemode")) return;
         target.setGameMode(gm);
         String msg = plugin.getConfig().getString("messages.gamemode-change")
                 .replace("%player%", target.getName())
