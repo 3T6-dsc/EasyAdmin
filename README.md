@@ -1,0 +1,2 @@
+# EasyAdmin
+EasyAdmin plugin minecraft
